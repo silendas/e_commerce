@@ -5,19 +5,21 @@ export default auth((req) => {
   const { nextUrl } = req;
 
   const isApiAuthRoute = nextUrl.pathname.startsWith("/api/auth");
-  const isPublicRoute = ["/", "/register"].includes(nextUrl.pathname);
   const isAuthRoute = ["/login", "/register"].includes(nextUrl.pathname);
+  
+  const isPrivateRoute = 
+    nextUrl.pathname.startsWith("/admin") || 
+    nextUrl.pathname.startsWith("/profile") ||
+    nextUrl.pathname.startsWith("/checkout");
 
   if (isApiAuthRoute) return null;
 
   if (isAuthRoute) {
-    if (isLoggedIn) {
-      return Response.redirect(new URL("/dashboard", nextUrl));
-    }
+    if (isLoggedIn) return Response.redirect(new URL("/", nextUrl));
     return null;
   }
 
-  if (!isLoggedIn && !isPublicRoute) {
+  if (isPrivateRoute && !isLoggedIn) {
     return Response.redirect(new URL("/login", nextUrl));
   }
 
@@ -25,5 +27,5 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|images|uploads|favicon.ico).*)"],
 };
