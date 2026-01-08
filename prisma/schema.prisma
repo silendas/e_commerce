@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -18,6 +12,13 @@ enum Role {
   ADMIN
 }
 
+enum OrderStatus {
+  PENDING_PAYMENT // Menunggu bayar
+  PAID           // Sudah bayar, stok sudah berkurang
+  CANCELLED      // Dibatalkan, stok dikembalikan
+  COMPLETED      // Selesai
+}
+
 model User {
   id        String    @id @default(cuid())
   name      String?
@@ -27,6 +28,10 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
+  
+  // Relations
+  cart      CartItem[]
+  orders    Order[]
 }
 
 model Product {
@@ -38,5 +43,45 @@ model Product {
   image       String?  
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  deletedAt   DateTime? 
+  deletedAt   DateTime?
+
+  // Relations
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId]) // Mencegah duplikasi produk yang sama di cart user
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  userId      String
+  totalAmount Int
+  status      OrderStatus @default(PENDING_PAYMENT)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  user  User        @relation(fields: [userId], references: [id])
+  items OrderItem[]
+}
+
+model OrderItem {
+  id        String @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  priceAtBuy Int // Menyimpan harga saat dibeli (jika nanti harga produk naik, data ini tetap)
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
 }
