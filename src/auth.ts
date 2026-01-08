@@ -13,31 +13,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
-        const email = credentials?.email as string;
-        const password = credentials?.password as string;
-
-        if (!email || !password) return null;
-
+        
         const user = await db.user.findUnique({
-          where: { email, deletedAt: null },
+          where: { 
+            email: credentials.email as string,
+            deletedAt: null // User yang di-soft delete tidak bisa login
+          },
         });
 
         if (!user || !user.password) return null;
-
-        console.log("--- DEBUG LOGIN ---");
-        console.log("Password dari Form:", credentials.password);
-        console.log("Password di DB:", user.password);
 
         const isPasswordMatch = await bcrypt.compare(
           credentials.password as string,
           user.password
         );
 
-        console.log("Hasil Match:", isPasswordMatch);
-        console.log("-------------------");
-
         if (!isPasswordMatch) return null;
 
+        // Data yang dikembalikan di sini akan masuk ke token JWT
         return {
           id: user.id,
           name: user.name,
@@ -48,12 +41,31 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user;
+      const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
+      const isOnAdmin = nextUrl.pathname.startsWith('/admin');
+
+      if (isOnDashboard || isOnAdmin) {
+        if (isLoggedIn) return true;
+        return false;
+      }
+      return true;
+    },
+
     async jwt({ token, user }) {
-      if (user) token.role = (user as any).role;
+      if (user) {
+        token.role = (user as any).role;
+        token.id = user.id;
+      }
       return token;
     },
+
     async session({ session, token }) {
-      if (session.user) (session.user as any).role = token.role;
+      if (session.user) {
+        (session.user as any).role = token.role;
+        (session.user as any).id = token.id as string;
+      }
       return session;
     },
   },
