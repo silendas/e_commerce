@@ -60,7 +60,7 @@ model CartItem {
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, productId]) // Mencegah duplikasi produk yang sama di cart user
+  @@unique([userId, productId]) 
 }
 
 model Order {
@@ -80,7 +80,7 @@ model OrderItem {
   orderId   String
   productId String
   quantity  Int
-  priceAtBuy Int // Menyimpan harga saat dibeli (jika nanti harga produk naik, data ini tetap)
+  priceAtBuy Int 
 
   order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id])

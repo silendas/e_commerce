@@ -3,6 +3,7 @@ import db from "@/lib/db";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import CartItemRow from "./CartItemRow";
+import CheckoutButton from "./CheckoutButton";
 
 export default async function CartPage() {
   const session = await auth();
@@ -104,12 +105,11 @@ export default async function CartPage() {
               </div>
             </div>
 
-            <button
-              disabled={totalPrice === 0}
-              className="w-full bg-black text-white py-5 rounded-2xl font-bold uppercase tracking-widest hover:bg-blue-600 transition-all disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed shadow-xl shadow-black/5 active:scale-95"
-            >
-              Checkout Sekarang
-            </button>
+            <CheckoutButton disabled={totalPrice === 0} />
+
+            <p className="text-[10px] text-gray-400 text-center mt-4 font-medium uppercase tracking-tighter">
+              Stok aman dikurangi setelah pembayaran berhasil
+            </p>
           </div>
         </div>
       )}

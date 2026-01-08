@@ -10,7 +10,8 @@ export default auth((req) => {
   const isPrivateRoute = 
     nextUrl.pathname.startsWith("/admin") || 
     nextUrl.pathname.startsWith("/profile") ||
-    nextUrl.pathname.startsWith("/checkout");
+    nextUrl.pathname.startsWith("/checkout") ||
+    nextUrl.pathname.startsWith("/orders");
 
   if (isApiAuthRoute) return null;
 
