@@ -158,7 +158,7 @@ export default function ProductClient({
       </div>
 
       <div className="mt-6 flex items-center justify-between px-2">
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Hal {currentPage} dari {totalPages || 1}</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Halaman {currentPage} dari {totalPages || 1}</p>
         <div className="flex gap-2">
           <button 
             onClick={() => router.push(`?q=${searchTerm}&page=${currentPage - 1}`)} 

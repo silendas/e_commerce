@@ -126,7 +126,7 @@ export default function Navbar({ user, cartCount = 0 }: { user?: any; cartCount?
                             href="/admin/users"
                             className="flex items-center px-4 py-2.5 text-sm font-bold text-blue-600 hover:bg-blue-50"
                           >
-                            Manajemen Dashboard
+                            Manajemen System
                           </Link>
                         ) : (
                           <Link
