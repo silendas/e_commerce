@@ -41,7 +41,6 @@ export async function createOrderFromCart() {
       return order;
     });
 
-    revalidatePath("/cart");
     revalidatePath("/orders");
     return { success: true, orderId: result.id };
   } catch (error: any) {
@@ -121,5 +120,53 @@ export async function processPayment(orderId: string) {
     return { success: true };
   } catch (error: any) {
     return { success: false, message: error.message };
+  }
+}
+
+export async function updateOrderStatus(orderId: string, status: "PAID" | "COMPLETED" | "CANCELLED") {
+  try {
+    await db.$transaction(async (tx) => {
+      const order = await tx.order.findUnique({
+        where: { id: orderId },
+        include: { items: true }
+      });
+
+      if (!order) throw new Error("Order tidak ditemukan");
+
+      if (status === "PAID" && order.status === "PENDING_PAYMENT") {
+        for (const item of order.items) {
+          const product = await tx.product.findUnique({ where: { id: item.productId } });
+          
+          if (!product || product.stock < item.quantity) {
+            throw new Error(`Stok produk ${product?.name || ""} tidak mencukupi!`);
+          }
+
+          await tx.product.update({
+            where: { id: item.productId },
+            data: { stock: { decrement: item.quantity } },
+          });
+        }
+      }
+
+      if (status === "CANCELLED" && order.status === "PAID") {
+        for (const item of order.items) {
+          await tx.product.update({
+            where: { id: item.productId },
+            data: { stock: { increment: item.quantity } },
+          });
+        }
+      }
+
+      await tx.order.update({
+        where: { id: orderId },
+        data: { status }
+      });
+    });
+
+    revalidatePath("/admin/orders");
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    throw new Error("Gagal mengupdate status");
   }
 }

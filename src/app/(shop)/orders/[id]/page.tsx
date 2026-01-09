@@ -25,7 +25,6 @@ export default async function OrderDetailPage({
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
-      {/* Tombol Kembali ke Daftar Pesanan */}
       <Link
         href="/orders"
         className="inline-flex items-center gap-2 text-xs font-bold text-gray-400 hover:text-black transition mb-8 group"
@@ -101,7 +100,7 @@ export default async function OrderDetailPage({
 
         <div className="p-8 md:p-10 bg-gray-50/50 flex flex-col md:flex-row justify-between items-center gap-8">
           <div>
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Total yang harus dibayar</p>
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Transaksi</p>
             <p className="text-3xl font-black text-blue-600 tracking-tighter">
               Rp {order.totalAmount.toLocaleString("id-ID")}
             </p>
@@ -110,6 +109,26 @@ export default async function OrderDetailPage({
           <div className="w-full md:w-auto">
             {order.status === "PENDING_PAYMENT" ? (
               <PaymentButton orderId={order.id} />
+            ) : order.status === "CANCELLED" ? (
+              <div className="flex flex-col items-center md:items-end">
+                <div className="flex items-center gap-2 bg-rose-50 text-rose-600 px-6 py-3 rounded-2xl border border-rose-100 shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                    <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z" clipRule="evenodd" />
+                  </svg>
+                  <span className="font-black uppercase text-xs tracking-widest">Pesanan Dibatalkan</span>
+                </div>
+                <p className="text-[9px] text-gray-400 mt-2 font-black uppercase tracking-tighter">Maaf, pesanan Anda telah dibatalkan & stok dikembalikan</p>
+              </div>
+            ) : order.status === "COMPLETED" ? (
+              <div className="flex flex-col items-center md:items-end">
+                <div className="flex items-center gap-2 bg-blue-50 text-blue-600 px-6 py-3 rounded-2xl border border-blue-100 shadow-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                    <path d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm4.28 10.28a.75.75 0 0 0 0-1.06l-3-3a.75.75 0 1 0-1.06 1.06l1.72 1.72H8.25a.75.75 0 0 0 0 1.5h5.69l-1.72 1.72a.75.75 0 1 0 1.06 1.06l3-3Z" />
+                  </svg>
+                  <span className="font-black uppercase text-xs tracking-widest">Pesanan Selesai</span>
+                </div>
+                <p className="text-[9px] text-gray-400 mt-2 font-black uppercase tracking-tighter">Terima kasih telah berbelanja bersama kami</p>
+              </div>
             ) : (
               <div className="flex flex-col items-center md:items-end">
                 <div className="flex items-center gap-2 bg-green-50 text-green-600 px-6 py-3 rounded-2xl border border-green-100 shadow-sm">

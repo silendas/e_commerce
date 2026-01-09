@@ -13,10 +13,10 @@ enum Role {
 }
 
 enum OrderStatus {
-  PENDING_PAYMENT // Menunggu bayar
-  PAID           // Sudah bayar, stok sudah berkurang
-  CANCELLED      // Dibatalkan, stok dikembalikan
-  COMPLETED      // Selesai
+  PENDING_PAYMENT
+  PAID          
+  CANCELLED     
+  COMPLETED     
 }
 
 model User {

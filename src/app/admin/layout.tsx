@@ -36,6 +36,12 @@ export default async function AdminLayout({
           >
             <span className="text-sm font-medium">Manajemen Produk</span>
           </Link>
+          <Link
+            href="/admin/orders"
+            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 hover:text-white transition-all group"
+          >
+            <span className="text-sm font-medium">Manajemen Order</span>
+          </Link>
         </nav>
 
         <div className="p-4 border-t border-slate-800 space-y-2">
