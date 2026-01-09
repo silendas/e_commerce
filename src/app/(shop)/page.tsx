@@ -6,24 +6,43 @@ import AddToCartButton from "../components/AddToCartButton";
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; page?: string }>;
 }) {
   const session = await auth();
   const isLoggedIn = !!session;
 
   const resolvedParams = await searchParams;
   const query = resolvedParams.q || "";
+  
+  const currentPage = Number(resolvedParams.page) || 1;
+  const pageSize = 10;
+  const skip = (currentPage - 1) * pageSize;
 
-  const products = await db.product.findMany({
-    where: {
-      deletedAt: null,
-      OR: [
-        { name: { contains: query, mode: "insensitive" } },
-        { description: { contains: query, mode: "insensitive" } },
-      ],
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  const [products, totalCount] = await Promise.all([
+    db.product.findMany({
+      where: {
+        deletedAt: null,
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { description: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      orderBy: { createdAt: "desc" },
+      take: pageSize,
+      skip: skip,    
+    }),
+    db.product.count({
+      where: {
+        deletedAt: null,
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { description: { contains: query, mode: "insensitive" } },
+        ],
+      },
+    }),
+  ]);
+
+  const totalPages = Math.ceil(totalCount / pageSize);
 
   return (
     <div className="bg-white min-h-screen text-black">
@@ -31,7 +50,7 @@ export default async function HomePage({
         <div className="bg-gray-900 rounded-3xl p-8 mb-10 text-white flex flex-col justify-center h-48 sm:h-64 relative overflow-hidden">
           <div className="relative z-10">
             <h2 className="text-3xl sm:text-5xl font-black mb-2 tracking-tighter uppercase">
-              DISKON AKHIR TAHUN!
+              DISKON AWAL TAHUN!
             </h2>
             <p className="text-gray-400 font-medium">
               Dapatkan produk kualitas terbaik dengan harga miring.
@@ -45,7 +64,7 @@ export default async function HomePage({
           {query ? (
             <span>Hasil pencarian untuk: <span className="text-black">"{query}"</span></span>
           ) : (
-            "Koleksi Produk Terbaru"
+            "Koleksi Produk Kami"
           )}
         </h3>
 
@@ -107,6 +126,37 @@ export default async function HomePage({
             </div>
           ))}
         </div>
+
+        {/* NAVIGASI HALAMAN (PAGINATION CONTROLS) */}
+        {totalPages > 1 && (
+          <div className="mt-12 flex justify-center items-center gap-4">
+            <Link
+              href={`?q=${query}&page=${currentPage - 1}`}
+              className={`p-4 rounded-2xl border transition-all ${
+                currentPage <= 1 
+                ? "pointer-events-none opacity-20" 
+                : "bg-white hover:border-black shadow-sm"
+              }`}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
+            </Link>
+            
+            <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+              Halaman {currentPage} Dari {totalPages}
+            </span>
+
+            <Link
+              href={`?q=${query}&page=${currentPage + 1}`}
+              className={`p-4 rounded-2xl border transition-all ${
+                currentPage >= totalPages 
+                ? "pointer-events-none opacity-20" 
+                : "bg-white hover:border-black shadow-sm"
+              }`}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+            </Link>
+          </div>
+        )}
 
         {products.length === 0 && (
           <div className="text-center py-24 bg-gray-50 rounded-[40px] border border-dashed border-gray-200">
