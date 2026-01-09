@@ -29,24 +29,18 @@ Aplikasi E-commerce modern berbasis web yang dibangun menggunakan **Next.js 15**
 Silakan salin dan jalankan perintah di bawah ini secara berurutan:
 
 ```bash
-# 1. Clone repository ini
-git clone [https://github.com/username-anda/nama-repo.git](https://github.com/username-anda/nama-repo.git)
-
-# 2. Masuk ke dalam folder proyek
-cd nama-repo
-
-# 3. Install semua dependencies
+# 1. Install semua dependencies
 npm install
 
-# 4. Buat file .env dan masukkan konfigurasi berikut
+# 2. Buat file .env dan masukkan konfigurasi berikut
 # (Sesuaikan DATABASE_URL dengan kredensial PostgreSQL Anda)
 echo "DATABASE_URL=\"postgresql://user:password@localhost:5432/db_ecommerce?schema=public\"
 NEXTAUTH_SECRET=\"$(openssl rand -base64 32)\"
 NEXTAUTH_URL=\"http://localhost:3000\"" > .env
 
-# 5. Generate Prisma Client dan Sinkronisasi Database
+# 3. Generate Prisma Client dan Sinkronisasi Database
 npx prisma generate
 npx prisma migrate dev --name init
 
-# 6. Jalankan aplikasi dalam mode development
+# 4. Jalankan aplikasi dalam mode development
 npm run dev
