@@ -106,10 +106,6 @@ export default async function CartPage() {
             </div>
 
             <CheckoutButton disabled={totalPrice === 0} />
-
-            <p className="text-[10px] text-gray-400 text-center mt-4 font-medium uppercase tracking-tighter">
-              Stok aman dikurangi setelah pembayaran berhasil
-            </p>
           </div>
         </div>
       )}
