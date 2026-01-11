@@ -68,6 +68,8 @@ model Order {
   userId      String
   totalAmount Int
   status      OrderStatus @default(PENDING_PAYMENT)
+  snapToken    String?    // Midtrans snap token
+  paymentType  String?    // e.g., credit_card, gopay
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 

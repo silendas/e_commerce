@@ -4,6 +4,7 @@ import db from "@/lib/db";
 import bcrypt from "bcryptjs";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
   providers: [
     Credentials({
       name: "Credentials",
@@ -17,7 +18,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const user = await db.user.findUnique({
           where: { 
             email: credentials.email as string,
-            deletedAt: null // User yang di-soft delete tidak bisa login
+            deletedAt: null
           },
         });
 
@@ -30,7 +31,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!isPasswordMatch) return null;
 
-        // Data yang dikembalikan di sini akan masuk ke token JWT
         return {
           id: user.id,
           name: user.name,

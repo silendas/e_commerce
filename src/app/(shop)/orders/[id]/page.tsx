@@ -37,11 +37,7 @@ export default async function OrderDetailPage({
           stroke="currentColor"
           className="w-3 h-3 group-hover:-translate-x-1 transition-transform"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-          />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
         </svg>
         KEMBALI KE PESANAN SAYA
       </Link>
@@ -61,9 +57,7 @@ export default async function OrderDetailPage({
               <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Tanggal Pesanan</p>
               <p className="font-bold text-sm text-black">
                 {new Date(order.createdAt).toLocaleDateString("id-ID", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric"
+                  day: "numeric", month: "long", year: "numeric"
                 })}
               </p>
             </div>
@@ -108,7 +102,7 @@ export default async function OrderDetailPage({
 
           <div className="w-full md:w-auto">
             {order.status === "PENDING_PAYMENT" ? (
-              <PaymentButton orderId={order.id} />
+              <PaymentButton orderId={order.id} snapToken={order.snapToken} />
             ) : order.status === "CANCELLED" ? (
               <div className="flex flex-col items-center md:items-end">
                 <div className="flex items-center gap-2 bg-rose-50 text-rose-600 px-6 py-3 rounded-2xl border border-rose-100 shadow-sm">
@@ -117,7 +111,6 @@ export default async function OrderDetailPage({
                   </svg>
                   <span className="font-black uppercase text-xs tracking-widest">Pesanan Dibatalkan</span>
                 </div>
-                <p className="text-[9px] text-gray-400 mt-2 font-black uppercase tracking-tighter">Maaf, pesanan Anda telah dibatalkan & stok dikembalikan</p>
               </div>
             ) : order.status === "COMPLETED" ? (
               <div className="flex flex-col items-center md:items-end">
@@ -127,7 +120,6 @@ export default async function OrderDetailPage({
                   </svg>
                   <span className="font-black uppercase text-xs tracking-widest">Pesanan Selesai</span>
                 </div>
-                <p className="text-[9px] text-gray-400 mt-2 font-black uppercase tracking-tighter">Terima kasih telah berbelanja bersama kami</p>
               </div>
             ) : (
               <div className="flex flex-col items-center md:items-end">
@@ -137,7 +129,7 @@ export default async function OrderDetailPage({
                   </svg>
                   <span className="font-black uppercase text-xs tracking-widest">Pembayaran Berhasil</span>
                 </div>
-                <p className="text-[9px] text-gray-400 mt-2 font-black uppercase tracking-tighter">Pesanan ini sudah diproses & stok diperbarui</p>
+                <p className="text-[9px] text-gray-400 mt-2 font-black uppercase tracking-tighter">Pesanan sedang diproses</p>
               </div>
             )}
           </div>
